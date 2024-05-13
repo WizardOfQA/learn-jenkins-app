@@ -1,25 +1,25 @@
 pipeline {
     agent any
 
-        stages {            
-            stage('Build') {            
-                agent {
-                    docker {
-                        image 'node:18-alpine'
-                        reuseNode true
-                    }
+    stages {            
+        stage('Build') {            
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
                 }
-                steps {
-                    sh '''
-                        ls -la
-                        node --version
-                        npm --version
-                        npm ci
-                        npm run build
-                        ls -la
-                    '''
-                }
-            }    
+            }
+            steps {
+                sh '''
+                    ls -la
+                    node --version
+                    npm --version
+                    npm ci
+                    npm run build
+                    ls -la
+                '''
+            }
+        }    
 
         stage('Tests'){
             parallel {
@@ -69,18 +69,18 @@ pipeline {
         }
 
         stage('Deploy') {            
-                agent {
-                    docker {
-                        image 'node:18-alpine'
-                        reuseNode true //  later on we need access to the workspace.
-                    }
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true //  later on we need access to the workspace.
                 }
-                steps {
-                    sh '''
-                        npm install netlify-cli -g
-                        node_modules/.bin/netlify --version
-                    '''
-                }
-            }    
+            }
+            steps {
+                sh '''
+                    npm install netlify-cli
+                    node_modules/.bin/netlify --version
+                '''
+            }
+        }    
     }
 }
