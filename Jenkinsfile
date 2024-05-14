@@ -55,12 +55,7 @@ pipeline {
                             image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                             reuseNode true
                         }
-                    }
-                    environment {
-                        NETLIFY_SITE_ID = 'a0988698-8311-4b31-9a99-8f6a1fc9658c'
-                        NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-                        CI_ENVIRONMENT_URL = 'https://lighthearted-bubblegum-1d0afc.netlify.app'
-                    }
+                    }                    
                     steps{
                         echo 'Test stage'
                         sh '''
@@ -104,6 +99,9 @@ pipeline {
                     reuseNode true
                 }
             }
+            environment {
+                        CI_ENVIRONMENT_URL = 'https://lighthearted-bubblegum-1d0afc.netlify.app'
+                    }
             steps{
                 echo 'Test stage'
                 sh '''
