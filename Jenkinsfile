@@ -82,6 +82,10 @@ pipeline {
                 }
             }
             
+            environment {
+                        CI_ENVIRONMENT_URL = 'STAGING_URL_TO_BE_SET'
+            }
+
             steps{
                 echo 'Test stage'
                 sh '''
@@ -118,7 +122,7 @@ pipeline {
             }
             environment {
                         CI_ENVIRONMENT_URL = 'https://lighthearted-bubblegum-1d0afc.netlify.app'
-                    }
+            }
             steps{                
                 sh '''
                     node --version
