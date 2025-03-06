@@ -1,8 +1,7 @@
 pipeline {
     agent any
 
-    stages {
-        /*
+    stages {        
         stage('Build'){
             agent {
                 docker {
@@ -20,8 +19,7 @@ pipeline {
                     ls -la
                 '''
             }
-        }
-        */
+        }        
         stage('Test'){
             agent {
                 docker {
@@ -34,6 +32,22 @@ pipeline {
                 sh '''
                 #'test -f build/index.html'
                 npm test
+                '''
+            }
+        }
+        stage('E2E'){
+            agent{
+                docker{
+                    image 'mcr.microsoft.com/playwright:v1.43.0-jammy'
+                    reuseNode true
+                }
+            }
+            steps{
+                echo: 'Test stage'
+                sh '''
+                    npm instlal serve
+                    node_modules/.bin/serve -s build
+                    npx playwright test
                 '''
             }
         }
