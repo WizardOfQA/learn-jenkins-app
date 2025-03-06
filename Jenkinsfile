@@ -43,7 +43,7 @@ pipeline {
                 }
             }
             steps{
-                echo: 'Test stage'
+                echo 'Test stage'
                 sh '''
                     npm instalㅣ serve
                     node_modules/.bin/serve -s build
