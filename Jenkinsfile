@@ -89,7 +89,7 @@ pipeline {
                     sh '''
                         npm install netlify-cli
                         node_modules/.bin/netlify --version
-                        echo "Deploying to production. Site ID: $NETLIFY+SITE_ID"
+                        echo "Deploying to staging. Site ID: $NETLIFY+SITE_ID"
                         node_modules/.bin/netlify status
                         node_modules/.bin/netlify deploy --dir=build
                     '''
@@ -97,44 +97,44 @@ pipeline {
             }
 
             stage('Deploy prod') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
+                agent {
+                    docker {
+                        image 'node:18-alpine'
+                        reuseNode true
+                    }
                 }
-            }
-            steps {
-                sh '''
-                    npm install netlify-cli
-                    node_modules/.bin/netlify --version
-                    echo "Deploying to production. Site ID: $NETLIFY+SITE_ID"
-                    node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --prod
-                '''
-            }
+                steps {
+                    sh '''
+                        npm install netlify-cli
+                        node_modules/.bin/netlify --version
+                        echo "Deploying to production. Site ID: $NETLIFY+SITE_ID"
+                        node_modules/.bin/netlify status
+                        node_modules/.bin/netlify deploy --dir=build --prod
+                    '''
+                }
         }
 
         stage('Prod E2E') {
-                    agent {
-                        docker {
+                agent {
+                    docker {
                             image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                             reuseNode true
                         }
-                    }
-                    environment {
+                }
+                 environment {
                         CI_ENVIRONMENT_URL = 'https://helpful-lollipop-841d4f.netlify.app/'
-                    }
+                }
 
-                    steps {
+                steps {
                         sh '''
                             npx playwright test --reporter=html
                         '''
+                }
+                post {
+                    always {
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E', reportTitles: '', useWrapperFileDirectly: true])
                     }
-                    post {
-                        always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E', reportTitles: '', useWrapperFileDirectly: true])
-                        }
-                    }
-                }     
+                }
+        }     
     }    
 }
