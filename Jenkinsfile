@@ -78,14 +78,14 @@ pipeline {
             }            
         }
 
-            stage('Deploy staging') {
-                agent {
+        stage('Deploy staging') {
+            agent {
                     docker {
                         image 'node:18-alpine'
                         reuseNode true
                     }
-                }
-                steps {
+            }
+            steps {
                     sh '''
                         npm install netlify-cli
                         node_modules/.bin/netlify --version
@@ -94,9 +94,17 @@ pipeline {
                         node_modules/.bin/netlify deploy --dir=build
                     '''
                 }
+         }
+        
+        stage('Approval') {
+            steps {
+                    timeout(time: 15, unit: 'MINUTES'){
+                        input message: 'Do you wish to deploy to production?', ok: 'Yes, I am sure!'
+                    }
             }
+        }
 
-            stage('Deploy prod') {
+        stage('Deploy prod') {
                 agent {
                     docker {
                         image 'node:18-alpine'
